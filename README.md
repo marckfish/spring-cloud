@@ -4,6 +4,12 @@ This project shows how to use The config server in real conditions.
 
 I take a simple example, there is two modules in this project, one's for config-server,the second for reading configuration files from config server, and demonstrate how to changes file properties without rebuild or restart the service
 
+**Environment**
+
+- Java 8
+- Spring boot 1.5.4
+- Maven 3.9.9
+
 **I- Config Server**
 
 This module is our server-config, his pom contains the following dependencies
