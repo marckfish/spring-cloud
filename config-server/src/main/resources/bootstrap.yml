@@ -1,0 +1,18 @@
+server:
+  port: 8888
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: file://${user.home}/github/config-resources
+          #You can point to remote repository uri: https://github.com/marckfish/config-resources
+  application:
+    name: CONFIG-SERVER
+#We disable security
+security:
+  basic:
+    enabled: false
+management:
+  security:
+    enabled: false

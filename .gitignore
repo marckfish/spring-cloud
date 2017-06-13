@@ -1,0 +1,15 @@
+# Created by .ignore support plugin (hsz.mobi)
+build/
+build/*
+.DS_Store
+*bin*
+*target*
+wiki/
+*.iml
+.idea/*
+.idea
+mvnw*
+.mvn/*
+.mvn
+.*~
+*.class
