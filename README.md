@@ -8,7 +8,6 @@ I take a simple example, there is two modules in this project, one's for config-
 
 This module is our server-config, his pom contains the following dependencies
 
-     
             <dependency>
     			<groupId>org.springframework.boot</groupId>
     			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -73,11 +72,11 @@ you will see all environment configurations. As a reminder /env is an actuator e
     
 **Understand *http://localhost:8888/messages/dev/master* URL**
 
-1- _messages_ is the logical name of the application, it must be unique. To set a logical name, use spring.application.name in bootstrap.yml located in the messages module, 
+1- **_messages_** is the logical name of the application, it must be unique. To set a logical name, use spring.application.name in bootstrap.yml located in the messages module, 
 we will explain this file in the next section. In fact The config server will use the name to resolve and pick up appropriate properties from the config server repository.<br/>
-2- _dev_ is the profile, we can have a severals profiles, the file properties id named like {logical-name}-{profile}.yml(properties),in our case we have got just one profile _dev_, the file is named messages-dev. 
+2- **_dev_** is the profile, we can have a severals profiles, the file properties id named like {logical-name}-{profile}.yml(properties),in our case we have got just one profile _dev_, the file is named messages-dev. 
     The default profile is named _default_. if we had just messages.yml without specific profile, the url will have been *http://localhost:8888/messages/default/master*<br/>
-3- _master_ is the label, is named master by default. The label si an optional Git Label.<br/>
+3- **_master_** is the label, is named master by default. The label si an optional Git Label.<br/>
 
 Finally, the pattern of the url is like this : _http://localhost:8888/{logical-name}/{profile}/{optional-label}_
 
