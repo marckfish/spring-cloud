@@ -242,6 +242,7 @@ For both instance you will see:
     o.s.cloud.bus.event.RefreshListener : Received remote refresh request. Keys refreshed [message.hello]
 
 Return to http://localhost:8569/hello and http://localhost:8570/hello, and now the browser display "Hello world!".
+
 **Source**
 - https://spring.io/guides/gs/centralized-configuration/
 - https://github.com/spring-cloud/spring-cloud-config
