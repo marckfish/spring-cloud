@@ -179,12 +179,12 @@ Go to messages directory and run these commands:
 
 Before all, check if the Config server is running, if this is not the case refer you to the section **Running the config-server**.
 
-1- mvn clean install
-2- java -jar target/messages-service.jar
-3- Go to http://localhost:8569/hello, the browser will display "hello everybody!"
+1- mvn clean install <br/>
+2- java -jar target/messages-service.jar <br/>
+3- Go to http://localhost:8569/hello, the browser will display "hello everybody!" <br/>
 
 Now modify message.hello within message-dev.yml, replace "Hello everybody!" by "Hello world!"
-If you refresh http://localhost:8888/messages/dev/master, the browser will display
+If you refresh http://localhost:8888/messages/dev/master, the browser will display :
 
     {"name":"messages","profiles":["dev"],"label":"master","version":"72f0913970caded8443f49ab0bdadf13b1f9e304","state":null,"propertySources":[{"name":"file:///home/merzouk/github/config-resources/messages-dev.yml",
         "source":{"message.hello":"Hello world!","spring.rabbitmq.host":"localhost","spring.rabbitmq.username":"guest","spring.rabbitmq.password":"guest","spring.rabbitmq.port":5672,"server.port":"${port:8569}"}}]}
@@ -197,11 +197,51 @@ Execute the following command:
 
     curl -d {} localhost:8569/refresh
     
-The bellow command send an empty POST to /refresh. Now if you refresh _http://localhost:8569/hello_, you will see "Hello world!"
+The bellow command send an empty POST to /refresh. Now if you refresh _http://localhost:8569/hello_, you will see "Hello world!".
 
+**Spring Cloud Bus**
 
+The bellow approach allows to refresh configuration parameters without restarting the service. This is useful if we have 1 or 2 instances of the service running. <br/>
+If we have more than 5 instances for example, we have to call /refresh for each instance. it's cumbersome to do this.
 
+For that we will use Spring Cloud Bus, which provides a mechanism to refresh configurations across multiple instances without knowing how many instances there are, or their locations.<br/>
+The mechanism is simple to understand. In fact each instance connect to a single message broker. Each instance subscribes for change events, and refreshes its local configuration when necessary. 
+
+The refresh is triggered by a call "/bus/refresh" endpoint by an any instance, then the change is propagated to other instances through the cloud bus and the single common message broker. 
+
+In our case RabbitMQ is used as the AMQP message broker. To implement it we added the following dependency:
+
+    <dependency>
+    			<groupId>org.springframework.cloud</groupId>
+    			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+    		</dependency>
+
+before to continue, install rabbitmq server **https://www.rabbitmq.com/download.html** <br/>
+
+To verify if the server is running, go to http://localhost:15672, username: guest, password: guest
+
+Reset the message.hello property, then rebuild and restart the messages service:
+
+- java -jar target/messages-service.jar --port=8569
+- java -jar target/messages-service.jar --port=8570
+
+Now two instances are running one on port 8569, and another one on port 8570.
+
+Go to http://localhost:8569/hello and http://localhost:8570/hello, the browser will display "Hello everybody!" for both instances
+
+Change message.hello to "Hello world!" and call /bus/refresh:
+    
+    curl -d {} http://localhost:8569/bus/refresh?destination=messages:**
+                        
+                                    or
+                                    
+    curl -d {} http://localhost:8569/bus/refresh
+    
+For both instance you will see:
+
+    o.s.cloud.bus.event.RefreshListener : Received remote refresh request. Keys refreshed [message.hello]
+
+Return to http://localhost:8569/hello and http://localhost:8570/hello, and now the browser display "Hello world!".
 **Source**
-
 - https://spring.io/guides/gs/centralized-configuration/
 - https://github.com/spring-cloud/spring-cloud-config
