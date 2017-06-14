@@ -1,5 +1,6 @@
 # spring-cloud-config
-
+As a reminder, spring cloud config server is an externalized configuration server, it allows to centralize and manage all properties for applications in distributed system.
+    
 This project shows how to use The config server in real conditions.
 
 I take a simple example, there is two modules in this project, one's for config-server,the second for reading configuration files from config server, and demonstrate how to changes file properties without rebuild or restart the service
@@ -60,7 +61,9 @@ the server will run always on 8888)
 spring.cloud.config.server.git.uri Allows to specify the path to Config Server Git Repository which contains all file properties, in our case we pointed to local repository.
 To point to remote repository replace _file://${user.home}/github/config-resources_ by https://github.com/marckfish/config-resources
 
-As we not use yet the security, we disable it
+Note: If you use a local repository, don't forgot to clone _clone https://github.com/marckfish/config-resources_ and put it for example in /user/home/github directory
+
+As we not use yet the security, we disable it.
 
 The repository *https://github.com/marckfish/config-resources* contains for the moment one only file messages-dev.yml
 
@@ -74,16 +77,131 @@ you will see all environment configurations. As a reminder /env is an actuator e
 4- To see the content of messages-dev.yml go to http://localhost:8888/messages/dev/master, the browser will display for you the following content   
     
     {"name":"messages","profiles":["dev"],"label":"master","version":"72f0913970caded8443f49ab0bdadf13b1f9e304","state":null,"propertySources":[{"name":"file:///home/merzouk/github/config-resources/messages-dev.yml",
-    "source":{"message.hello":"Hello everybody!","spring.rabbitmq.host":"localhost","spring.rabbitmq.username":"guest","spring.rabbitmq.password":"guest","spring.rabbitmq.port":5672,"spring.cloud.discovery.enabled":true,"spring.cloud.discovery.serviceId":"CONFIG-SERVER","server.port":"${port:8569}"}}]}
+    "source":{"message.hello":"Hello everybody!","spring.rabbitmq.host":"localhost","spring.rabbitmq.username":"guest","spring.rabbitmq.password":"guest","spring.rabbitmq.port":5672,"server.port":"${port:8569}"}}]}
     
 **Understand *http://localhost:8888/messages/dev/master* URL**
 
 1- **_messages_** is the logical name of the application, it must be unique. To set a logical name, use spring.application.name in bootstrap.yml located in the messages module, 
 we will explain this file in the next section. In fact The config server will use the name to resolve and pick up appropriate properties from the config server repository.<br/>
-2- **_dev_** is the profile, we can have a severals profiles, the file properties id named like {logical-name}-{profile}.yml(properties),in our case we have got just one profile _dev_, the file is named messages-dev. 
+2- **_dev_** is the profile, we can have a severals profiles, the file properties is named like {logical-name}-{profile}.yml(properties),in our case we have got just one profile _dev_, the file is named messages-dev. 
     The default profile is named _default_. if we had just messages.yml without specific profile, the url will have been *http://localhost:8888/messages/default/master*<br/>
 3- **_master_** is the label, is named master by default. The label si an optional Git Label.<br/>
 
 Finally, the pattern of the url is like this : _http://localhost:8888/{logical-name}/{profile}/{optional-label}_
 
-**II- Access to the config server from clients (messages module)  to be continued**
+**II- Access to the config server from clients (messages module)**
+
+The messages service use the Config server, it's a Config client.
+
+1- So that, to use messages as a config client,we added the following dependencies:
+
+    <dependency>
+    			<groupId>org.springframework.boot</groupId>
+    			<artifactId>spring-boot-starter-actuator</artifactId>
+    		</dependency>
+    		<dependency>
+    			<groupId>org.springframework.cloud</groupId>
+    			<artifactId>spring-cloud-config-server</artifactId>
+    		</dependency>
+
+- Actuator is obligatory for the refreshing the configuration properties.
+
+2- We added the following dependency to include the Spring Cloud dependencies:
+
+    <dependencyManagement>
+    		<dependencies>
+    			<dependency>
+    				<groupId>org.springframework.cloud</groupId>
+    				<artifactId>spring-cloud-dependencies</artifactId>
+    				<version>Camden.SR6</version>
+    				<type>pom</type>
+    				<scope>import</scope>
+    			</dependency>
+    		</dependencies>
+    	</dependencyManagement>
+
+**Explaining bootstrap.yml**
+
+    spring:
+       application:
+         name: messages
+       profiles:
+         active: dev
+       cloud: #Config server
+         config:
+           uri: http://localhost:8888
+    management:
+      security:
+        enabled: false
+        
+At the startup, the service will interrogate the spring config server at http://localhost:8888, 
+and will tell it to retrieve the adequat property file with the name _messages_ and with the profile _dev_ (messages-dev)
+
+**Content of messages-dev.yml**
+
+    message:
+      hello: Hello everybody!
+    
+    spring:
+      rabbitmq:
+        host: localhost
+        username: guest
+        password: guest
+        port: 5672
+    
+    server:
+      port: ${port:8569}
+
+The service turn on port 8569, we can override the port by --port=xxxx.
+For the moment you can ignore the bloc rabbitmq, I will come back to that later.
+
+To demonstrate the centralized configuration of properties and propagation of changes, we added message.hello.
+
+the service contains a Rest Controller MessageController, we added the @RefreshScope annotation, 
+this annotation allows properties to be refreshed when there in change.
+
+    @RestController
+    	@RefreshScope
+    	@RequestMapping
+    	public class MessageController{
+    
+    		@Value("${message.hello:hello}")
+    		String message;
+    
+    		@GetMapping(path = "/hello")
+    		public String getMessage(){
+    			return message;
+    		}
+    	}
+    	
+**Quickstart**
+Go to messages directory and run these commands:
+
+Before all, check if the Config server is running, if this is not the case refer you to the section **Running the config-server**.
+
+1- mvn clean install
+2- java -jar target/messages-service.jar
+3- Go to http://localhost:8569/hello, the browser will display "hello everybody!"
+
+Now modify message.hello within message-dev.yml, replace "Hello everybody!" by "Hello world!"
+If you refresh http://localhost:8888/messages/dev/master, the browser will display
+
+    {"name":"messages","profiles":["dev"],"label":"master","version":"72f0913970caded8443f49ab0bdadf13b1f9e304","state":null,"propertySources":[{"name":"file:///home/merzouk/github/config-resources/messages-dev.yml",
+        "source":{"message.hello":"Hello world!","spring.rabbitmq.host":"localhost","spring.rabbitmq.username":"guest","spring.rabbitmq.password":"guest","spring.rabbitmq.port":5672,"server.port":"${port:8569}"}}]}
+        
+If you refresh http://localhost:8569/hello, the browser will display always "Hello everybody!", 
+it's normal because the configuration properties was not reloaded yet.<br/>
+To reload the configuration properties, call the _/refresh_ of the messages service. <br/>
+
+Execute the following command:
+
+    curl -d {} localhost:8569/refresh
+    
+The bellow command send an empty POST to /refresh. Now if you refresh _http://localhost:8569/hello_, you will see "Hello world!"
+
+
+
+**Source**
+
+- https://spring.io/guides/gs/centralized-configuration/
+- https://github.com/spring-cloud/spring-cloud-config
