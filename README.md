@@ -108,7 +108,7 @@ The messages service use the Config server, it's a Config client.
 
 2- We added the following dependency to include the Spring Cloud dependencies:
 
-    <dependencyManagement>
+        <dependencyManagement>
     		<dependencies>
     			<dependency>
     				<groupId>org.springframework.cloud</groupId>
@@ -160,7 +160,7 @@ To demonstrate the centralized configuration of properties and propagation of ch
 the service contains a Rest Controller MessageController, we added the @RefreshScope annotation, 
 this annotation allows properties to be refreshed when there in change.
 
-    @RestController
+        @RestController
     	@RefreshScope
     	@RequestMapping
     	public class MessageController{
@@ -211,7 +211,7 @@ The refresh is triggered by a call "/bus/refresh" endpoint by an any instance, t
 
 In our case RabbitMQ is used as the AMQP message broker. To implement it we added the following dependency:
 
-    <dependency>
+            <dependency>
     			<groupId>org.springframework.cloud</groupId>
     			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
     		</dependency>
