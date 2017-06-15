@@ -95,7 +95,7 @@ The messages service use the Config server, it's a Config client.
 
 1- So that, to use messages as a config client,we added the following dependencies:
 
-    <dependency>
+            <dependency>
     			<groupId>org.springframework.boot</groupId>
     			<artifactId>spring-boot-starter-actuator</artifactId>
     		</dependency>
