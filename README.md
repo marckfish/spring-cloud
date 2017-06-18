@@ -70,6 +70,7 @@ As we didn't implement the security, we have disabled it.
 The repository https://github.com/marckfish/config-resources contains for the moment only one file: "messages-dev.yml"
 
 **Running the config-server**
+
 Go to config-server directory and run the following commands:
 
 1- mvn clean install <br/>
@@ -177,6 +178,7 @@ this annotation allows properties to be refreshed when there are changes.
     	}
     	
 **Quickstart**
+
 Go to messages directory and run these commands:
 
 Before all, check if the Config server is running, if it's not, please check the section "Running the config-server".
