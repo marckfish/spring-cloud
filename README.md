@@ -15,6 +15,7 @@ I took a simple example, there are two modules in this project, one is the confi
 
 This module is our server-config, his pom contains the following dependencies
 
+            
             <dependency>
     			<groupId>org.springframework.boot</groupId>
     			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -98,7 +99,8 @@ The messages service which uses the Config server is called a Config client.
 
 1- So, to use messages as a config client,we've added the following dependencies:
 
-    <dependency>
+           
+           <dependency>
     			<groupId>org.springframework.boot</groupId>
     			<artifactId>spring-boot-starter-actuator</artifactId>
     		</dependency>
