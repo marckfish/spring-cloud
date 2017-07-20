@@ -47,6 +47,11 @@ In bootstrap.yml in src/main/resources, we have got the following configuration:
           server:
             git:
               uri: file://${user.home}/github/config-resources
+              #or
+              #spring:
+              # profiles:
+              #   active: native
+              #spring.cloud.config.server.native.searchLocations: file:///full/path/to/resources
       application:
         name: CONFIG-SERVER
     security:
