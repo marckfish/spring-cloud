@@ -1,0 +1,11 @@
+spring:
+   application:
+     name: service-messages
+   profiles:
+     active: dev
+   cloud: #Config server
+     config:
+       uri: http://localhost:8888
+management:
+  security:
+    enabled: false
