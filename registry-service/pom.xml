@@ -8,10 +8,10 @@
 		<artifactId>microservices-poc</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>service-registry</artifactId>
+	<artifactId>registry-service</artifactId>
 	<packaging>jar</packaging>
 
-	<name>service-registry</name>
+	<name>registry-service</name>
 	<description>Service registry</description>
 
 	<dependencies>
@@ -44,6 +44,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<finalName>${name}</finalName>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>

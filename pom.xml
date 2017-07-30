@@ -24,8 +24,9 @@
 
     <modules>
         <module>config-server</module>
-        <module>service-messages</module>
-        <module>service-registry</module>
+        <module>messages-service</module>
+        <module>edge-service</module>
+        <module>registry-service</module>
     </modules>
 
     <dependencyManagement>

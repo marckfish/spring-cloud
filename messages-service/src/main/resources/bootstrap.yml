@@ -1,6 +1,6 @@
 spring:
    application:
-     name: service-registry
+     name: messages-service
    profiles:
      active: dev
    cloud: #Config server
