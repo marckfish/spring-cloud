@@ -1,4 +1,5 @@
 ** Quickstart **
+
 Don't forget to clone *https://github.com/marckfish/config-resources*
 
 - mvn clean install
