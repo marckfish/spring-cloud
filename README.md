@@ -8,6 +8,4 @@ Don't forget to clone *https://github.com/marckfish/config-resources*
 - java -jar config-server/target/edge-service.jar
 - java -jar config-server/target/messages-service.jar
 
-Go to eureka home page to see the all services
-
-    http://localhost:8761/
+Go to eureka home page to see the all services *http://localhost:8761/*
