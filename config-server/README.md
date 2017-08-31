@@ -73,8 +73,6 @@ Note: If you use a local repository, don't forget to clone https://github.com/ma
 
 As we didn't implement the security, we have disabled it.
 
-The repository https://github.com/marckfish/config-resources contains for the moment only one file: "messages-dev.yml"
-
 **Running the config-server**
 
 Go to config-server directory and run the following commands:
