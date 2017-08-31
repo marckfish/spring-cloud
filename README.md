@@ -1,3 +1,5 @@
+If you want known how config-server does work, go to the README file in the config-server module.
+
 ** Quickstart **
 
 Don't forget to clone *https://github.com/marckfish/config-resources*
